@@ -1,0 +1,42 @@
+#jinja2: trim_blocks:True, lstrip_blocks:True
+{% if item.server_name_redirect is defined %}
+server {
+    listen        {{ item.listen | default(80) }};
+    server_name   {{ item.server_redirect_name }};
+    return        301 $scheme://{{ item.server_name.split(' ')[0] }}$request_uri;
+}
+
+{% endif %}
+server {
+    {% block server_basic %}
+    # Basic configuration
+    listen {{ item.listen | default (80) }};
+    {% if item.server_name is defined %}
+    server_name {{ item.server_name }};
+    {% endif %}
+    {% if item.root is defined %}
+    root {{ item.root }};
+    {% endif %}
+    {% if item.index is defined %}
+    index {{ item.index }};
+    {% endif %}
+    {% if item.error_page is defined %}
+    error_page {{ item.error_page }};
+    {% endif %}
+    {% if item.return is defined %}
+    return {{ item.return }};
+    {% endif %}
+
+    {% endblock %}
+    {% block server_logs %}
+    # Server logs
+    access_log {{ item.access_log | default('/var/log/access-' ~ item.server_name.split(' ')[0] ~ '.log') }};
+    error_log {{ item.error_log | default('/var/log/error-' ~ item.server_name.split(' ')[0] ~ '.log') }};
+
+    {% endblock %}
+    {% block server_extra %}
+    {% if item.extra_parameters is defined %}
+    {{ item.extra_parameters | indent(4) }}
+    {% endif %}
+    {% endblock %}
+}

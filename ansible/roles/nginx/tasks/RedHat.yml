@@ -1,0 +1,8 @@
+---
+- name: Enable nginx repo
+  template:
+    src: nginx.repo.j2
+    dest: /etc/yum.repos.d/nginx.repo
+    owner: root
+    group: "{{ root_group }}"
+    mode: 0644

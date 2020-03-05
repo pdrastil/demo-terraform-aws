@@ -1,0 +1,85 @@
+---
+# Package to install
+nginx_package_name: nginx
+
+# Worker configuration
+nginx_worker_processes: >-
+  "{{ ansible_processor_vcpus | default(ansible_processor_count) }}"
+nginx_worker_connections: 1024
+nginx_multi_accept: 'off'
+
+# Log files
+nginx_error_log: /var/log/nginx/error.log warn
+nginx_access_log: /var/log/nginx/access.log main buffer=16k flush=2m
+
+# Direct copy of data
+nginx_sendfile: 'on'
+
+# Socket options
+nginx_tcp_nopush: 'on'
+nginx_tcp_nodelay: 'on'
+
+# Keep alive timeouts
+nginx_keepalive_timeout: 65
+nginx_keepalive_requests: 100
+
+# Display nginx server version
+nginx_server_tokens: 'on'
+# Amount of buckets for server names
+nginx_server_names_hash_bucket_size: 64
+# Response body size
+nginx_client_max_body_size: 64m
+
+# Path to cache
+nginx_proxy_cache_path: ''
+
+# Extra options
+nginx_extra_conf_options: ''
+# Example extra main options, used within the main nginx's context:
+#   nxing_extra_conf_options: |
+#     env VARIABLE;
+#     include /etc/nginx/main.d/*.conf;
+
+nginx_extra_http_options: ''
+# Example extra http options, printed inside the main server http config:
+#   nginx_extra_htp_options: |
+#     proxy_buffering   off;
+#     proxy_set_header  X-Real-IP $remote_addr;
+#     proxy_set_header  X-Scheme $scheme;
+#     proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+#     proxy_set_header  Host $http_host;
+
+nginx_remove_default_vhost: false
+
+# Configuration for hosted files
+nginx_vhosts: []
+# Example vhost below, showing all available options:
+#   - listen: 80                    # default: 80
+#     server_name: "example.com"    # default: N/A
+#     root: "/var/www/example.com"  # default: N/A
+#     index: "index.html index.htm" # default: "index.html index.htm"
+#     filename: "example.com.conf"  # Can be used to set vhost filename
+#
+# Properties that are only added if defined:
+#     server_name_redirect: www.example.com     # Redirects to different name
+#     error_page: ''                            # default: N/A
+#     access_log: ''                            # default: /var/log/access-<server_name>.log
+#     error_log: ''                             # default: /var/log/error-<server_name>.log
+#     extra_parameters: ''                      # Can be used to add extra config blocks (multiline)
+#     state: absent                             # default: present
+
+nginx_upstreams: []
+# Example upstream below
+#   - name: myapp
+#     strategy: "ip_hash"
+#     keepalive: 16
+#     server: {
+#       "srv1.example.com",
+#       "srv2.example.com weight=3",
+#       "srv3.example.com"
+#     }
+
+nginx_log_format: |-
+  '$remote_addr - $remote_user [$time_local] "$request" '
+  '$status $body_bytes_sent "$http_referer" '
+  '"$http_user_agent" "$http_x_forwarded_for"'
