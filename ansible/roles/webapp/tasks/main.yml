@@ -1,0 +1,78 @@
+---
+- name: Add Docker CE repository
+  shell: yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo # noqa 305
+  args:
+    creates: /etc/yum.repos.d/docker-ce.repo
+
+- name: Install OS tools
+  package:
+    name:
+    - git
+    - gcc
+    - python-devel
+    - docker-ce
+    state: present
+
+- name: Upgrade PIP
+  pip:
+    name: pip
+    extra_args: --upgrade
+
+- name: Install docker-compose
+  pip:
+    name: docker-compose
+
+- name: Ensure docker group
+  group:
+    name: docker
+    state: present
+
+- name: Ensure webserver user
+  user:
+    name: webserver
+    comment: webserver
+    home: /opt/webserver
+    state: present
+
+- name: Add webserver to docker group
+  user:
+    name: webserver
+    shell: /sbin/nologin
+    group: docker
+
+- name: Ensure docker service is running
+  service:
+    name: docker
+    state: started
+    enabled: true
+
+# Required for idempotence check
+# If we don't rename repo for clone demo-docker_web fact will not work
+- name: Check for application
+  stat:
+    path: /opt/webserver/demo
+  register: repo
+
+- name: Deploy application
+  when: not repo.stat.exists
+  git:
+    repo: 'https://github.com/pdrastil/demo-docker.git'
+    dest: /opt/webserver/demo
+    version: "{{ version }}"
+
+- name: Set application ownership
+  file:
+    path: /opt/webserver/demo
+    owner: webserver
+    group: root
+    recurse: true
+
+- name: Start application
+  docker_compose:
+    project_src: /opt/webserver/demo
+  register: output
+
+- name: Ensure application is running
+  assert:
+    that:
+    - "web.demo_web_1.state.running"

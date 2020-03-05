@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include webapp"
+      include_role:
+        name: "webapp"
