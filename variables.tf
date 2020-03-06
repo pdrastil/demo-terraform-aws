@@ -15,3 +15,15 @@ variable "network_cidr" {
   default     = "10.0.0.0/16"
   description = "VPC CIDR for deployment environment"
 }
+
+variable "app_version" {
+  type        = string
+  default     = "1.0"
+  description = "Version of deployed application"
+}
+
+variable "public_key_path" {
+  type        = string
+  default     = "~/.ssh/id_rsa.pub"
+  description = "SSH key for accessing EC2 instances"
+}

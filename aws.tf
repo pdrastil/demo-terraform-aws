@@ -13,7 +13,11 @@ module "network" {
 }
 
 module "webapp" {
-  source      = "./modules/webapp"
-  app_version = "master"
-  vpc_id      = module.network.vpc_id
+  source          = "./modules/webapp"
+  app_version     = var.app_version
+  public_key_path = var.public_key_path
+  vpc             = module.network.vpc
+  public_subnets  = module.network.public_subnets
+  private_subnets = module.network.private_subnets
+
 }
