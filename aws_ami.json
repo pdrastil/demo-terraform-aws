@@ -45,7 +45,8 @@
     {
       "type": "shell",
       "inline": [
-        "sudo yum -y upgrade"
+        "sudo yum -y upgrade",
+        "sudo setsebool -P httpd_can_network_connect true"
       ]
     },
     {
