@@ -1,4 +1,8 @@
 ---
+- name: Add EPEL repository
+  package:
+    name: epel-release
+
 - name: Add Docker CE repository
   shell: yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo # noqa 305
   args:
@@ -9,13 +13,16 @@
     name:
     - git
     - gcc
+    - python-pip
     - python-devel
     - docker-ce
     state: present
 
 - name: Upgrade PIP
   pip:
-    name: pip
+    name:
+    - pip
+    - requests
     extra_args: --upgrade
 
 - name: Install docker-compose

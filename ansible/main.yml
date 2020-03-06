@@ -1,7 +1,8 @@
 ---
 - name: AWS deployment
-  hosts: webservers
+  hosts: default
   become: true
   gather_facts: true
   roles:
     - webapp
+    - nginx

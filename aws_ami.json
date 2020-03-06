@@ -1,0 +1,60 @@
+{
+  "variables": {
+    "aws_access_key": "{{ env `AWS_ACESS_KEY_ID` }}",
+    "aws_secret_key": "{{ env `AWS_SECRET_ACCESS_KEY` }}",
+    "version": "master"
+  },
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "instance_type": "t3.micro",
+      "communicator": "ssh",
+      "ssh_username": "centos",
+      "ami_name": "demo",
+      "force_deregister": true,
+      "region": "{{ user `aws_region` }}",
+      "ami_virtualization_type": "hvm",
+      "source_ami_filter": {
+        "most_recent": true,
+        "owners": [ "aws-marketplace" ],
+        "filters": {
+          "product-code": "aw0evgkw8e5c1q413zgy5pjce"
+        }
+      },
+      "vpc_id": "{{ user `vpc_id` }}",
+      "subnet_filter": {
+        "filters": {
+          "vpc-id": "{{ user `vpc_id` }}",
+          "tag:Type": "public"
+        },
+        "most_free": true,
+        "random": true
+      },
+      "run_tags": {
+        "Name": "packer-ami-builder"
+      },
+      "tags": {
+        "OS_Version": "CentOS 7",
+        "Release": "Latest",
+        "Base_AMI_Name": "{{ .SourceAMIName }}",
+        "Version": "{{ user `version` }}"
+      }
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "sudo yum -y upgrade"
+      ]
+    },
+    {
+      "type": "ansible",
+      "roles_path": "./ansible/roles",
+      "extra_arguments": [
+        "-e version={{ user `version` }}"
+      ],
+      "playbook_file": "./ansible/main.yml"
+    }
+  ]
+}
