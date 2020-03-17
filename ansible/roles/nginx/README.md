@@ -186,4 +186,6 @@ MIT / BSD
 
 ## Author Information
 
-This role was created in 2020 by Petr Drastil.
+This role was created in 2014 by [Jeff Geerling](https://www.jeffgeerling.com/), author of [Ansible for DevOps](https://www.ansiblefordevops.com/).
+
+The role was modified for demo purposes in 2020 by Petr Drastil.
